@@ -1,3 +1,5 @@
+-- Supabase Schema for LookMyHolidays
+
 -- 1. Create contact_enquiries table (For Bookings and General Enquiries)
 create table if not exists public.contact_enquiries (
   id uuid default gen_random_uuid() primary key,
@@ -7,7 +9,8 @@ create table if not exists public.contact_enquiries (
   email text not null,
   destination text,
   travel_date date,
-  message text
+  message text,
+  user_id uuid default auth.uid()
 );
 
 -- Enable RLS
@@ -20,9 +23,13 @@ create policy "Allow public inserts" on public.contact_enquiries
   with check (true);
 
 drop policy if exists "Allow read access" on public.contact_enquiries;
-create policy "Allow read access" on public.contact_enquiries 
-  for select 
-  using (true);
+create policy "Allow read access" on public.contact_enquiries
+  for select
+  using (
+    (auth.uid() is not null and auth.uid() = user_id)
+    or
+    (auth.jwt()->>'role' = 'service_role')
+  );
 
 
 -- 2. Create searches table (For tracking search queries and parameters)
@@ -46,7 +53,7 @@ create policy "Allow public inserts" on public.searches
 drop policy if exists "Allow read access" on public.searches;
 create policy "Allow read access" on public.searches 
   for select 
-  using (true);
+  using (auth.uid() is not null);
 
 
 -- 3. Create newsletter_subscriptions table (For capturing newsletter emails)
@@ -68,7 +75,8 @@ create policy "Allow public inserts" on public.newsletter_subscriptions
 drop policy if exists "Allow read access" on public.newsletter_subscriptions;
 create policy "Allow read access" on public.newsletter_subscriptions 
   for select 
-  using (true);
+  using (auth.uid() is not null);
+
 
 -- 4. Create general_inquiries table (For the main Contact Us section)
 create table if not exists public.general_inquiries (
@@ -79,7 +87,8 @@ create table if not exists public.general_inquiries (
   email text not null,
   destination text,
   travel_date date,
-  message text
+  message text,
+  user_id uuid default auth.uid()
 );
 
 -- Enable RLS
@@ -92,6 +101,52 @@ create policy "Allow public inserts" on public.general_inquiries
   with check (true);
 
 drop policy if exists "Allow read access" on public.general_inquiries;
-create policy "Allow read access" on public.general_inquiries 
-  for select 
+create policy "Allow read access" on public.general_inquiries
+  for select
+  using (
+    (auth.uid() is not null and auth.uid() = user_id)
+    or
+    (auth.jwt()->>'role' = 'service_role')
+  );
+
+
+-- 5. Create destinations table (Public catalog)
+create table if not exists public.destinations (
+  id uuid default gen_random_uuid() primary key,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  name text not null,
+  country text not null,
+  img text not null,
+  price text not null
+);
+
+-- Enable RLS
+alter table public.destinations enable row level security;
+
+-- RLS Policies for destinations
+drop policy if exists "Allow public read access" on public.destinations;
+create policy "Allow public read access" on public.destinations
+  for select
+  using (true);
+
+
+-- 6. Create packages table (Public catalog)
+create table if not exists public.packages (
+  id uuid default gen_random_uuid() primary key,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  title text not null,
+  nights text not null,
+  img text not null,
+  price text not null,
+  tag text,
+  incl text[]
+);
+
+-- Enable RLS
+alter table public.packages enable row level security;
+
+-- RLS Policies for packages
+drop policy if exists "Allow public read access" on public.packages;
+create policy "Allow public read access" on public.packages
+  for select
   using (true);

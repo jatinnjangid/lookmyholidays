@@ -436,16 +436,13 @@ function Index() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Load remembered credentials
+  // Load remembered email (never persist plaintext passwords)
   useEffect(() => {
-    const saved = localStorage.getItem("lmh_remember");
-    if (saved) {
-      try {
-        const { email, password } = JSON.parse(saved);
-        setAuthEmail(email || "");
-        setAuthPassword(password || "");
-        setRememberMe(true);
-      } catch { }
+    localStorage.removeItem("lmh_remember"); // clean up legacy plaintext passwords
+    const savedEmail = localStorage.getItem("lmh_remember_email");
+    if (savedEmail) {
+      setAuthEmail(savedEmail);
+      setRememberMe(true);
     }
   }, []);
 
@@ -689,15 +686,13 @@ function Index() {
         if (error) {
           setAuthError(error.message);
         } else {
-          // Save or clear remembered credentials
+          // Save or clear remembered email (never save passwords)
           if (rememberMe) {
-            localStorage.setItem(
-              "lmh_remember",
-              JSON.stringify({ email: authEmail, password: authPassword }),
-            );
+            localStorage.setItem("lmh_remember_email", authEmail);
           } else {
-            localStorage.removeItem("lmh_remember");
+            localStorage.removeItem("lmh_remember_email");
           }
+          localStorage.removeItem("lmh_remember");
           setUser(data.user);
           showToast("Welcome back! Logged in successfully.");
           setShowAuthModal(false);
@@ -1230,8 +1225,7 @@ function Index() {
 
                 if (error) {
                   console.error("Supabase general enquiry error:", error);
-                  setShowBookingSuccess(true);
-                  form.reset();
+                  showToast("Failed to submit inquiry: " + error.message + ". Please try again.");
                 } else {
                   setShowBookingSuccess(true);
                   form.reset();
@@ -1239,10 +1233,9 @@ function Index() {
                     fetchUserEnquiries(user.email);
                   }
                 }
-              } catch (err) {
+              } catch (err: any) {
                 console.error("Failed to submit general enquiry:", err);
-                setShowBookingSuccess(true);
-                form.reset();
+                showToast("Failed to send inquiry. Please check your connection and try again.");
               }
             }}
             className="reveal bg-card border rounded-3xl p-7 md:p-9 shadow-sm space-y-4"
@@ -1731,9 +1724,7 @@ function Index() {
 
                   if (error) {
                     console.error("Supabase booking modal error:", error);
-                    setShowBookingModal(false);
-                    setShowBookingSuccess(true);
-                    form.reset();
+                    showToast("Booking failed: " + error.message + ". Please try again.");
                   } else {
                     setShowBookingModal(false);
                     setShowBookingSuccess(true);
@@ -1745,11 +1736,9 @@ function Index() {
                       fetchUserEnquiries(user.email);
                     }
                   }
-                } catch (err) {
+                } catch (err: any) {
                   console.error("Failed to submit modal booking:", err);
-                  showToast("Booking request sent! We'll contact you shortly.");
-                  setShowBookingModal(false);
-                  form.reset();
+                  showToast("Failed to send booking request. Please check your connection and try again.");
                 }
               }}
               className="space-y-4"

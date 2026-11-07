@@ -1,7 +1,13 @@
+import { useState } from 'react';
 import { Facebook, Instagram, Youtube, Plane, Send } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { supabase } from '../../lib/supabase';
+import { toast } from 'sonner';
 
 export function Footer() {
+  const [submitting, setSubmitting] = useState(false);
+  const [email, setEmail] = useState('');
+
   const scrollTo = (id: string) => (e: React.MouseEvent) => {
     e.preventDefault();
     const el = document.getElementById(id);
@@ -10,15 +16,31 @@ export function Footer() {
     }
   };
 
-  return (
-    <footer className="bg-[oklch(0.18_0.02_50)] text-white/80 relative overflow-hidden pt-12 mt-10">
-      {/* Wave Animation */}
-      <div className="absolute top-0 left-0 w-full overflow-hidden leading-[0]">
-        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" className="relative block w-[calc(100%+1.3px)] h-[40px] md:h-[60px]">
-          <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" className="fill-background"></path>
-        </svg>
-      </div>
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || submitting) return;
+    setSubmitting(true);
+    try {
+      const { error } = await supabase.from('newsletter_subscriptions').insert([{ email }]);
+      if (error) {
+        if (error.code === '23505') {
+          toast.info("You're already subscribed to our newsletter!");
+        } else {
+          toast.error("Unable to subscribe right now. Please try again.");
+        }
+      } else {
+        toast.success("Thank you for subscribing to LookMyHolidays!");
+        setEmail('');
+      }
+    } catch {
+      toast.error("Failed to subscribe. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
+  return (
+    <footer className="bg-[oklch(0.18_0.02_50)] text-white/80 relative overflow-hidden pt-12 mt-10 border-t border-white/10">
       {/* Animated Airplanes (Fleet) */}
       {[
         { id: 1, size: 140, top: "top-10 md:top-20", delay: 0, duration: 15, yStart: 80, yEnd: -20, rotate: 15, opacity: "text-white/15" },
@@ -167,19 +189,26 @@ export function Footer() {
           </ul>
           
           {/* Newsletter Glow */}
-          <div className="relative group mt-6 max-w-xs">
+          <form onSubmit={handleSubscribe} className="relative group mt-6 max-w-xs">
             <div className="absolute -inset-2 bg-gradient-to-r from-primary to-accent rounded-lg blur-md opacity-80 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 z-0"></div>
             <div className="relative flex bg-black/40 rounded-lg p-1 backdrop-blur-sm border border-white/10 z-10">
               <input 
                 type="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email address..." 
+                required
                 className="w-full bg-transparent px-3 py-2 text-sm outline-none placeholder:text-white/40 focus:placeholder:text-white/60 transition-colors"
               />
-              <button className="bg-primary hover:bg-primary/90 text-primary-foreground p-2 rounded-md transition-colors flex items-center justify-center shadow-lg">
+              <button 
+                type="submit" 
+                disabled={submitting}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground p-2 rounded-md transition-colors flex items-center justify-center shadow-lg disabled:opacity-50"
+              >
                 <Send className="w-4 h-4" />
               </button>
             </div>
-          </div>
+          </form>
         </motion.div>
       </div>
 
