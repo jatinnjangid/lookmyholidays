@@ -45,7 +45,7 @@ export function FAQ() {
   };
 
   return (
-    <section className="py-24 bg-gray-50/50">
+    <section className="py-24 bg-background">
       <div className="mx-auto max-w-4xl px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-extrabold mb-6">Frequently Asked Questions</h2>
@@ -66,27 +66,27 @@ export function FAQ() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
                 className={`
-                  rounded-[24px] overflow-hidden bg-white shadow-sm hover:shadow-md
+                  rounded-[24px] overflow-hidden bg-card text-card-foreground shadow-sm hover:shadow-md
                   border transition-all duration-300 ease-in-out cursor-pointer group relative
-                  ${isOpen ? 'border-primary/30' : 'border-border/50 hover:border-primary/30 hover:-translate-y-1'}
+                  ${isOpen ? 'border-primary/40' : 'border-border/60 hover:border-primary/30 hover:-translate-y-1'}
                 `}
                 onClick={() => toggleFaq(index)}
               >
                 <div className={`
                   p-7 relative transition-colors duration-300
-                  ${isOpen ? 'bg-[#FFF8F2]' : 'group-hover:bg-[#FFF8F2]/50'}
+                  ${isOpen ? 'bg-primary/5' : 'group-hover:bg-primary/5'}
                 `}>
                   {isOpen && (
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-l-[24px]" />
                   )}
                   
                   <div className="flex justify-between items-center gap-4">
-                    <h3 className={`text-lg md:text-xl transition-colors ${isOpen ? 'font-bold text-black' : 'font-semibold text-gray-800'}`}>
+                    <h3 className={`text-lg md:text-xl transition-colors ${isOpen ? 'font-bold text-foreground' : 'font-semibold text-foreground/90'}`}>
                       {faq.question}
                     </h3>
                     <div className={`
                       flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300
-                      ${isOpen ? 'bg-primary/10 text-primary' : 'bg-gray-100 text-gray-500 group-hover:bg-primary/5 group-hover:text-primary/70'}
+                      ${isOpen ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary'}
                     `}>
                       <motion.div
                         animate={{ rotate: isOpen ? 180 : 0 }}

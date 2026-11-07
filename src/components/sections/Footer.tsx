@@ -40,33 +40,51 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-[oklch(0.18_0.02_50)] text-white/80 relative overflow-hidden pt-12 mt-10 border-t border-white/10">
-      {/* Animated Airplanes (Fleet) */}
-      {[
-        { id: 1, size: 140, top: "top-10 md:top-20", delay: 0, duration: 15, yStart: 80, yEnd: -20, rotate: 15, opacity: "text-white/15" },
-        { id: 2, size: 80, top: "top-32 md:top-40", delay: 4, duration: 18, yStart: 40, yEnd: -10, rotate: 10, opacity: "text-white/5" },
-        { id: 3, size: 110, top: "top-5 md:top-10", delay: 9, duration: 12, yStart: 120, yEnd: 0, rotate: 20, opacity: "text-white/10" },
-        { id: 4, size: 60, top: "top-48 md:top-60", delay: 2, duration: 25, yStart: 20, yEnd: 10, rotate: 5, opacity: "text-white/[0.03]" },
-        { id: 5, size: 90, top: "top-20 md:top-32", delay: 13, duration: 16, yStart: 60, yEnd: -15, rotate: 12, opacity: "text-white/10" },
-      ].map((plane) => (
-        <motion.div 
-          key={plane.id}
-          className={`absolute ${plane.top} z-0 ${plane.opacity}`}
-          initial={{ x: "-20vw", y: plane.yStart, rotate: plane.rotate }}
-          animate={{ x: "120vw", y: plane.yEnd, rotate: plane.rotate }}
-          transition={{ 
-            duration: plane.duration, 
-            repeat: Infinity, 
-            ease: "linear",
-            delay: plane.delay 
-          }}
+    <footer className="bg-[oklch(0.18_0.02_50)] text-white/80 relative pt-12 mt-16">
+      {/* Wave top transition (seamless dark wave matching footer) */}
+      <div className="absolute top-0 left-0 w-full overflow-hidden leading-[0] -translate-y-[98%] pointer-events-none z-10">
+        <svg
+          data-name="Layer 1"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 1200 120"
+          preserveAspectRatio="none"
+          className="relative block w-[calc(100%+1.3px)] h-[40px] md:h-[60px]"
         >
-          <Plane size={plane.size} />
-        </motion.div>
-      ))}
+          <path
+            d="M0,27.35 C120,45 220,55 321.39,56.44 c58,-10.79 114.16,-30.13 172,-41.86 c82.39,-16.72 168.19,-17.73 250.45,-0.39 C823.78,31 906.67,72 985.66,92.83 c70.05,18.48 146.53,26.09 214.34,3 V120 H0 Z"
+            className="fill-[oklch(0.18_0.02_50)]"
+          />
+        </svg>
+      </div>
 
-      {/* Decorative gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none" />
+      {/* Animated Airplanes (Fleet) Container with boundary clipping */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        {[
+          { id: 1, size: 140, top: "top-10 md:top-20", delay: 0, duration: 15, yStart: 80, yEnd: -20, rotate: 15, opacity: "text-white/15" },
+          { id: 2, size: 80, top: "top-32 md:top-40", delay: 4, duration: 18, yStart: 40, yEnd: -10, rotate: 10, opacity: "text-white/5" },
+          { id: 3, size: 110, top: "top-5 md:top-10", delay: 9, duration: 12, yStart: 120, yEnd: 0, rotate: 20, opacity: "text-white/10" },
+          { id: 4, size: 60, top: "top-48 md:top-60", delay: 2, duration: 25, yStart: 20, yEnd: 10, rotate: 5, opacity: "text-white/[0.03]" },
+          { id: 5, size: 90, top: "top-20 md:top-32", delay: 13, duration: 16, yStart: 60, yEnd: -15, rotate: 12, opacity: "text-white/10" },
+        ].map((plane) => (
+          <motion.div 
+            key={plane.id}
+            className={`absolute ${plane.top} ${plane.opacity}`}
+            initial={{ x: "-20vw", y: plane.yStart, rotate: plane.rotate }}
+            animate={{ x: "120vw", y: plane.yEnd, rotate: plane.rotate }}
+            transition={{ 
+              duration: plane.duration, 
+              repeat: Infinity, 
+              ease: "linear",
+              delay: plane.delay 
+            }}
+          >
+            <Plane size={plane.size} />
+          </motion.div>
+        ))}
+
+        {/* Decorative gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none" />
+      </div>
       
       <div className="mx-auto max-w-7xl px-4 py-8 grid md:grid-cols-4 gap-10 relative z-10">
         <motion.div
