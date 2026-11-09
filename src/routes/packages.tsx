@@ -32,7 +32,7 @@ function PackagesPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: (i % 6) * 0.1 }}
-              className="bg-card rounded-3xl overflow-hidden shadow-sm hover:shadow-[var(--shadow-elegant)] transition-shadow border flex flex-col sm:flex-row h-full group bg-white"
+              className="bg-card rounded-3xl overflow-hidden shadow-sm hover:shadow-[var(--shadow-elegant)] transition-shadow border flex flex-col sm:flex-row h-full group"
             >
               <div className="sm:w-2/5 relative overflow-hidden min-h-[240px] sm:min-h-full">
                 <img

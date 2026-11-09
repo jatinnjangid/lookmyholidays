@@ -428,7 +428,6 @@ function Index() {
   const [selectedModalVisaCountry, setSelectedModalVisaCountry] = useState("");
   const [selectedModalCustomDestination, setSelectedModalCustomDestination] = useState("");
   const [showBookingSuccess, setShowBookingSuccess] = useState(false);
-  const [showSubscribeSuccess, setShowSubscribeSuccess] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30);
